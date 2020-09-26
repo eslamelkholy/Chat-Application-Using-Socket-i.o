@@ -3,6 +3,7 @@ const socketIO = require("socket.io");
 const http = require("http");
 const router = require("./router");
 const PORT = process.env.PORT || 5000;
+const { addUser, removeUser, getUser, getUsersInRoom } = require("./models/users");
 
 const app = express();
 const server = http.createServer(app);
@@ -12,7 +13,15 @@ io.on("connection", (socket) => {
   console.log("We Have a New Connection!!!");
 
   socket.on("join", ({ name, room }, callback) => {
-    console.log(name, room);
+    const { error, user } = addUser({ id: socket.id, name, room });
+    if (error) return callback(error);
+
+    // Telling User that Welcomed To The Chat
+    socket.emit("message", { user: "Admin", text: `${user.name} Welcome to The Room ${user.room}` });
+    // Emit To Everyone Expect User That User Has Joined The Room
+    socket.broadcast.to(user.room).emit("message", { user: "Admin", text: `${user.name} Has Joined The Room` });
+    socket.join(user.room);
+    callback();
   });
 
   socket.on("disconnect", () => {

@@ -21,7 +21,7 @@ const getUsersInRoom = (room) => users.filter((user) => user.room === room);
 
 const cleanUpStrings = (str) => str.trim().toLowerCase();
 
-export default {
+module.exports = {
   addUser,
   removeUser,
   getUser,
