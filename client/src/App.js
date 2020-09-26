@@ -5,8 +5,8 @@ import Join from "./Components/Join";
 
 const App = () => (
   <Router>
-    <Route path="/" exact component={Join} />:
-    <Route path="/chat" exact component={Chat} />:
+    <Route path="/" exact component={Join} />
+    <Route path="/chat" exact component={Chat} />
   </Router>
 );
 
