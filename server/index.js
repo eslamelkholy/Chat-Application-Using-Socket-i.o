@@ -12,19 +12,18 @@ const io = socketIO(server);
 io.on("connection", (socket) => {
   console.log("We Have a New Connection!!!");
 
-  socket.on("join", ({ name, room }, callback) => {
+  socket.on("join", (data) => {
+    const { name, room } = data;
     const { error, user } = addUser({ id: socket.id, name, room });
-    if (error) return callback(error);
-    // Telling User that Welcomed To The Chat
+    if (error) return;
     socket.emit("message", { user: "Admin", text: `${user.name} Welcome to The Room ${user.room}` });
-    // Emit To Everyone Expect User That User Has Joined The Room
     socket.broadcast.to(user.room).emit("message", { user: "Admin", text: `${user.name} Has Joined The Room` });
     socket.join(user.room);
-    callback();
   });
 
   socket.on("sendMessage", (message, callback) => {
     const user = getUser(socket.id);
+    if (!user) return;
     io.to(user.room).emit("message", { user: user.name, text: message });
     callback();
   });
