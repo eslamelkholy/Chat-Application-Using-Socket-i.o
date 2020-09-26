@@ -14,6 +14,12 @@ const Chat = ({ location }) => {
     socket = io(END_POINT);
     setName(name);
     setRoom(room);
+    socket.emit("join", { name, room });
+    // This Used For Unmounting
+    return () => {
+      socket.emit("disconnect");
+      socket.off();
+    };
   }, [END_POINT, location.search]);
 
   return <p>Hello</p>;
