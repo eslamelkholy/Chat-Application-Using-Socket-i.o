@@ -5,11 +5,13 @@ import "./Chat.css";
 import InfoBar from "../Common/InfoBar/InfoBar";
 import Input from "../Common/Input/Input";
 import Messages from "../Messages/Messages";
+import TextContainer from "../TextContainer/TextContainer";
 
 let socket;
 const Chat = ({ location }) => {
   const [name, setName] = useState("");
   const [room, setRoom] = useState("");
+  const [users, setUsers] = useState("");
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const END_POINT = "localhost:5000";
@@ -29,6 +31,16 @@ const Chat = ({ location }) => {
   }, [END_POINT, location.search]);
 
   useEffect(() => {
+    socket.on("message", (message) => {
+      setMessages((messages) => [...messages, message]);
+    });
+
+    socket.on("roomData", ({ users }) => {
+      setUsers(users);
+    });
+  }, []);
+
+  useEffect(() => {
     socket.on("message", (message) => setMessages([...messages, message]));
   }, [messages]);
 
@@ -44,6 +56,7 @@ const Chat = ({ location }) => {
         <Messages messages={messages} name={name} />
         <Input message={message} setMessage={setMessage} sendMessage={sendMessage} />
       </div>
+      <TextContainer users={users} />
     </div>
   );
 };
