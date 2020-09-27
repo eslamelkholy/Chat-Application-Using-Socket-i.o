@@ -29,7 +29,9 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    console.log("User Had Left!!");
+    const user = removeUser(socket.id);
+    if (user) io.to(user.room).emit("message", { user: "Admin", text: `${user.name} Had Left` });
+    console.log(`${user.name} Had Left`);
   });
 });
 
